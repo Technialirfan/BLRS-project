@@ -1,0 +1,121 @@
+{
+  "totalTests": 19,
+  "passedTests": 19,
+  "failedTests": 0,
+  "report": [
+    {
+      "module": "M1",
+      "test": "1.1 Root Endpoint",
+      "status": "PASS",
+      "details": ""
+    },
+    {
+      "module": "M1",
+      "test": "1.2 Health Check Endpoint",
+      "status": "PASS",
+      "details": ""
+    },
+    {
+      "module": "M1",
+      "test": "1.3 404 Handler",
+      "status": "PASS",
+      "details": ""
+    },
+    {
+      "module": "M2",
+      "test": "2.1 Admin Login (Valid)",
+      "status": "PASS",
+      "details": ""
+    },
+    {
+      "module": "M2",
+      "test": "2.2 Patwari Login (Valid)",
+      "status": "PASS",
+      "details": ""
+    },
+    {
+      "module": "M2",
+      "test": "2.3 Tehsildar Login (Valid)",
+      "status": "PASS",
+      "details": ""
+    },
+    {
+      "module": "M2",
+      "test": "2.4 DC Login (Valid)",
+      "status": "PASS",
+      "details": ""
+    },
+    {
+      "module": "M2",
+      "test": "2.5 Invalid Password",
+      "status": "PASS",
+      "details": ""
+    },
+    {
+      "module": "M2",
+      "test": "2.9 Get My Profile",
+      "status": "PASS",
+      "details": ""
+    },
+    {
+      "module": "M2",
+      "test": "2.10 Protected Route Without Token",
+      "status": "PASS",
+      "details": ""
+    },
+    {
+      "module": "M3",
+      "test": "3.1 Register Land (Valid)",
+      "status": "PASS",
+      "details": ""
+    },
+    {
+      "module": "M3",
+      "test": "3.2 Duplicate Parcel ID",
+      "status": "PASS",
+      "details": ""
+    },
+    {
+      "module": "M3",
+      "test": "3.6 Get All Lands",
+      "status": "PASS",
+      "details": ""
+    },
+    {
+      "module": "M3",
+      "test": "3.8 Land Stats",
+      "status": "PASS",
+      "details": ""
+    },
+    {
+      "module": "M4",
+      "test": "4.1 Verify Land (Valid)",
+      "status": "PASS",
+      "details": ""
+    },
+    {
+      "module": "M4",
+      "test": "4.2 Verify Wrong Role",
+      "status": "PASS",
+      "details": ""
+    },
+    {
+      "module": "M5",
+      "test": "5.1 Approve Land (DC)",
+      "status": "PASS",
+      "details": ""
+    },
+    {
+      "module": "M8",
+      "test": "8.1 Search by CNIC",
+      "status": "PASS",
+      "details": ""
+    },
+    {
+      "module": "M8",
+      "test": "8.5 Public Search No Params",
+      "status": "PASS",
+      "details": ""
+    }
+  ]
+}

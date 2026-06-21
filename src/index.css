@@ -1,0 +1,122 @@
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap");
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    @apply scroll-smooth;
+  }
+  html.dark {
+    color-scheme: dark;
+  }
+  body {
+    @apply bg-slate-50 text-slate-900 transition-colors duration-200 dark:bg-slate-900 dark:text-slate-100;
+  }
+}
+
+[dir="ltr"] {
+  font-family: "Inter", sans-serif;
+}
+
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  @apply bg-slate-100 dark:bg-slate-800;
+}
+::-webkit-scrollbar-thumb {
+  @apply rounded-full bg-[#1B4332] dark:bg-[#2D6A4F];
+}
+
+@keyframes pulse-red {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+.status-disputed {
+  animation: pulse-red 1.5s ease-in-out infinite;
+}
+
+@keyframes glow {
+  0%,
+  100% {
+    box-shadow: 0 0 5px #1b4332;
+  }
+  50% {
+    box-shadow: 0 0 20px #2d6a4f, 0 0 40px #1b4332;
+  }
+}
+.blockchain-glow {
+  animation: glow 2s ease-in-out infinite;
+}
+
+@keyframes countup {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+.count-up {
+  animation: countup 0.5s ease-out forwards;
+}
+
+@media print {
+  .no-print,
+  .sidebar,
+  .navbar,
+  nav,
+  button {
+    display: none !important;
+  }
+  .print-content {
+    width: 100% !important;
+    margin: 0 !important;
+  }
+  body {
+    background: #fff !important;
+    color: #000 !important;
+  }
+  @page {
+    margin: 15mm;
+  }
+}
+
+.tx-hash {
+  font-family: "Courier New", Courier, monospace;
+  font-size: 0.8rem;
+}
+.land-card {
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+.land-card:hover {
+  transform: translateY(-2px);
+}
+
+input:focus,
+textarea:focus,
+select:focus {
+  @apply border-transparent outline-none ring-2 ring-[#1B4332] dark:ring-[#2D6A4F];
+}
+
+.leaflet-container {
+  height: 100%;
+  width: 100%;
+  z-index: 1;
+}
+
+.dark .leaflet-popup-content-wrapper,
+.dark .leaflet-popup-tip {
+  background: #1e293b;
+  color: #f1f5f9;
+}
