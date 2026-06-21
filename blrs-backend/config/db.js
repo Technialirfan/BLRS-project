@@ -12,7 +12,7 @@ const connectDB = async () => {
   } catch (error) {
     console.error("MongoDB Connection Failed:", error.message);
     console.log("\nMake sure MongoDB is running.");
-    process.exit(1);
+    // process.exit(1); // Removed to prevent Vercel 500 crash
   }
 };
 

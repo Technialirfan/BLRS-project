@@ -1,4 +1,7 @@
-const BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+let BASE_URL = import.meta.env.VITE_API_URL || 'https://blrs-backend.vercel.app';
+if (BASE_URL.endsWith('/')) {
+  BASE_URL = BASE_URL.slice(0, -1);
+}
 
 const apiCall = async (endpoint, options = {}) => {
   const token = localStorage.getItem('blrs_token');
