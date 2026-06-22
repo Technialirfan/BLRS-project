@@ -53,7 +53,12 @@ module.exports = {
     sepolia: {
       url: "https://ethereum-sepolia-rpc.publicnode.com",
       chainId: 11155111,
-      accounts: process.env.PRIVATE_KEY ? [process.env.PRIVATE_KEY, process.env.PRIVATE_KEY, process.env.PRIVATE_KEY, process.env.PRIVATE_KEY] : []
+      accounts: process.env.PRIVATE_KEY ? [
+        process.env.PRIVATE_KEY,
+        process.env.PRIVATE_KEY_PATWARI,
+        process.env.PRIVATE_KEY_TEHSILDAR,
+        process.env.PRIVATE_KEY_DC
+      ] : []
     }
   },
 

@@ -128,7 +128,7 @@ const LandDetails = () => {
       if (response?.ok) setLocalLand(response.data?.data?.land || response.data?.land);
       setConfirmOpen(false);
     } catch (error) {
-      toast.error(error.response?.data?.message || "Action failed");
+      toast.error(error.message || error.response?.data?.message || "Action failed");
     }
   };
 
@@ -148,7 +148,7 @@ const LandDetails = () => {
         toast.success("Record rejected");
       }
     } catch (error) {
-      toast.error(error.response?.data?.message || "Action failed");
+      toast.error(error.message || error.response?.data?.message || "Action failed");
     } finally {
       setRejectOpen(false);
       setAction(null);
