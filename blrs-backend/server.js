@@ -82,6 +82,7 @@ app.get("/api/health", (req, res) => {
     status: "healthy",
     dbState: mongoose.connection.readyState,
     mongoHost: mongoose.connection.host || "none",
+    mongoError: global.mongoError || "none",
     uriMasked: process.env.MONGODB_URI ? process.env.MONGODB_URI.substring(0, 45) + "..." : "undefined",
     uptime: process.uptime(),
     timestamp: new Date().toISOString(),

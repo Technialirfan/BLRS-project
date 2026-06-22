@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+global.mongoError = null;
 
 const connectDB = async () => {
   try {
@@ -17,6 +18,7 @@ const connectDB = async () => {
     console.log(`MongoDB Connected: ${conn.connection.host}`);
     console.log(`Database: ${conn.connection.name}`);
   } catch (error) {
+    global.mongoError = error.message;
     console.error("MongoDB Connection Failed:", error.message);
   }
 };
