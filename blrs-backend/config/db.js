@@ -2,6 +2,12 @@ const mongoose = require("mongoose");
 global.mongoError = null;
 
 const connectDB = async () => {
+  if (mongoose.connection.readyState === 1) return mongoose.connection;
+  if (mongoose.connection.readyState === 2) {
+    // wait for connection to establish
+    await new Promise(resolve => mongoose.connection.once('connected', resolve));
+    return mongoose.connection;
+  }
   try {
     let uri = process.env.MONGODB_URI;
     // VERCEL SRV BUG BYPASS FOR FINAL CLUSTER:

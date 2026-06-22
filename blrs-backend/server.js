@@ -24,9 +24,19 @@ const publicRoutes = require("./routes/public");
 const app = express();
 app.set("trust proxy", 1);
 
-connectDB();
-initBlockchain();
-initIPFS();
+// Ensure DB is connected for every request (Serverless Vercel Fix)
+app.use(async (req, res, next) => {
+  try {
+    await connectDB();
+    next();
+  } catch (err) {
+    res.status(500).json({ success: false, message: "Database connection failed", error: err.message });
+  }
+});
+
+// Initialize IPFS and Blockchain lazily in background
+initBlockchain().catch(console.error);
+initIPFS().catch(console.error);
 
 app.use(helmet());
 app.use(cors());
