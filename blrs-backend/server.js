@@ -89,6 +89,40 @@ app.get("/api/health", (req, res) => {
   });
 });
 
+app.get("/api/seed", async (req, res) => {
+  try {
+    const bcrypt = require("bcryptjs");
+    const db = mongoose.connection.db;
+    
+    // Clear old data
+    const collections = await db.listCollections().toArray();
+    for (const col of collections) {
+      await db.dropCollection(col.name);
+    }
+    
+    // Create admin user
+    const hashedPassword = await bcrypt.hash("Officer@2024", 12);
+    await db.collection("officers").insertOne({
+      fullName: "System Administrator",
+      cnic: "0000000000001",
+      email: "admin@blrs.gov.pk",
+      password: hashedPassword,
+      phone: "03001234567",
+      role: "admin",
+      assignedDistrict: null,
+      walletAddress: "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266",
+      bio: "",
+      isActive: true,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    });
+    
+    return res.json({ success: true, message: "Database completely recreated with default admin!" });
+  } catch (error) {
+    return res.status(500).json({ success: false, error: error.message });
+  }
+});
+
 app.use("/api/auth", authRoutes);
 app.use("/api/land", landRoutes);
 app.use("/api/disputes", disputeRoutes);
