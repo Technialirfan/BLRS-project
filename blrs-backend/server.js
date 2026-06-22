@@ -1,5 +1,6 @@
 require("dotenv").config();
 const express = require("express");
+const mongoose = require("mongoose");
 const helmet = require("helmet");
 const cors = require("cors");
 const morgan = require("morgan");
@@ -79,6 +80,9 @@ app.get("/api/health", (req, res) => {
   return res.json({
     success: true,
     status: "healthy",
+    dbState: mongoose.connection.readyState,
+    mongoHost: mongoose.connection.host || "none",
+    uriMasked: process.env.MONGODB_URI ? process.env.MONGODB_URI.substring(0, 45) + "..." : "undefined",
     uptime: process.uptime(),
     timestamp: new Date().toISOString(),
   });
