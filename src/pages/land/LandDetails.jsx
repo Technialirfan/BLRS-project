@@ -101,18 +101,23 @@ const LandDetails = () => {
   const runAction = async () => {
     try {
       if (action === "verify") {
-        await landAPI.verify(land.parcelId);
+        const res = await landAPI.verify(land.parcelId);
+        if (!res?.ok) throw new Error(res?.data?.message || "Verification failed");
         toast.success("Land verified");
       }
       if (action === "approve") {
-        await landAPI.approve(land.parcelId);
+        const res = await landAPI.approve(land.parcelId);
+        if (!res?.ok) throw new Error(res?.data?.message || "Approval failed");
         toast.success("Land approved");
       }
       if (action === "approve-transfer") {
+        const res = await landAPI.approveTransfer(land.parcelId);
+        if (!res?.ok) throw new Error(res?.data?.message || "Transfer approval failed");
         toast.success("Transfer approved");
       }
       if (action === "delete") {
-        await landAPI.delete(land.parcelId);
+        const res = await landAPI.delete(land.parcelId);
+        if (!res?.ok) throw new Error(res?.data?.message || "Deletion failed");
         toast.success("Land record deleted successfully");
         navigate("/land/all");
         return;
@@ -130,11 +135,14 @@ const LandDetails = () => {
   const runReject = async (reason) => {
     try {
       if (action === "revoke") {
-        await landAPI.revoke(land.parcelId, reason);
+        const res = await landAPI.revoke(land.parcelId, reason);
+        if (!res?.ok) throw new Error(res?.data?.message || "Revoke failed");
         toast.success("Land registration suspended/revoked");
         const response = await landAPI.getOne(parcelId);
         if (response?.ok) setLocalLand(response.data?.data?.land || response.data?.land);
       } else {
+        const res = await landAPI.reject(land.parcelId, reason);
+        if (!res?.ok) throw new Error(res?.data?.message || "Reject failed");
         updateLandStatus(land.parcelId, "Rejected", { rejectionReason: reason });
         addLog("LAND_REJECTED", user, land.parcelId, { reason });
         toast.success("Record rejected");
