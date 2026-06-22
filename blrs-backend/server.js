@@ -115,6 +115,25 @@ app.get("/api/socket-test", (req, res) => {
   });
 });
 
+// Auth Test Endpoint
+app.get("/api/auth-test", async (req, res) => {
+  const { MongoClient } = require('mongodb');
+  let uri = process.env.MONGODB_URI;
+  if (uri && uri.startsWith("mongodb+srv://")) {
+    const credentials = uri.split("@")[0].replace("mongodb+srv://", "");
+    uri = `mongodb://${credentials}@ac-ljjofdy-shard-00-00.stfezbz.mongodb.net:27017,ac-ljjofdy-shard-00-01.stfezbz.mongodb.net:27017,ac-ljjofdy-shard-00-02.stfezbz.mongodb.net:27017/blrs_db?ssl=true&replicaSet=atlas-wshn7o-shard-0&authSource=admin&retryWrites=true&w=majority`;
+  }
+  
+  const client = new MongoClient(uri, { serverSelectionTimeoutMS: 5000 });
+  try {
+    await client.connect();
+    await client.close();
+    res.json({ success: true, message: "Raw MongoClient connected perfectly! Authentication successful." });
+  } catch (error) {
+    res.json({ success: false, errorName: error.name, errorMessage: error.message, fullError: error.toString() });
+  }
+});
+
 app.get("/api/seed", async (req, res) => {
   try {
     const bcrypt = require("bcryptjs");
