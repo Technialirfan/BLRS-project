@@ -89,6 +89,32 @@ app.get("/api/health", (req, res) => {
   });
 });
 
+// Socket Test Endpoint to bypass mongoose and test raw TCP
+app.get("/api/socket-test", (req, res) => {
+  const net = require('net');
+  const host = "ac-ljjofdy-shard-00-00.stfezbz.mongodb.net";
+  const port = 27017;
+  
+  const client = new net.Socket();
+  const startTime = Date.now();
+  
+  client.setTimeout(10000); // 10s timeout
+  
+  client.connect(port, host, () => {
+    client.destroy(); // kill immediately after connect
+    res.json({ success: true, message: `Successfully connected via TCP to ${host} in ${Date.now() - startTime}ms. Firewall is OPEN.` });
+  });
+  
+  client.on('error', (err) => {
+    res.json({ success: false, message: `TCP Error: ${err.message}. Firewall is BLOCKED.` });
+  });
+  
+  client.on('timeout', () => {
+    client.destroy();
+    res.json({ success: false, message: `TCP Timeout after ${Date.now() - startTime}ms. Firewall is BLOCKED or dropping packets.` });
+  });
+});
+
 app.get("/api/seed", async (req, res) => {
   try {
     const bcrypt = require("bcryptjs");
