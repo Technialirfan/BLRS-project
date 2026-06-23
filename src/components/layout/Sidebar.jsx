@@ -22,6 +22,7 @@ const Sidebar = () => {
   const user = useStore((s) => s.officer);
   const logout = useStore((s) => s.logout);
   const sidebarOpen = useStore((s) => s.sidebarOpen);
+  const setSidebarOpen = useStore((s) => s.setSidebarOpen);
 
   if (!user) return null;
 
@@ -62,12 +63,22 @@ const Sidebar = () => {
   };
 
   return (
-    <aside
-      className={`sidebar fixed left-0 top-0 z-30 h-screen w-64 transform overflow-y-auto border-r border-white/10 bg-[#1B4332] text-white transition-transform dark:bg-[#0D2B1F] ${
-        sidebarOpen ? "translate-x-0" : "-translate-x-full md:translate-x-0"
-      }`}
-    >
-      <div className="p-4">
+    <>
+      {/* Mobile Backdrop */}
+      {sidebarOpen && (
+        <div
+          className="fixed inset-0 z-20 bg-black/50 transition-opacity md:hidden"
+          onClick={() => setSidebarOpen(false)}
+          aria-hidden="true"
+        />
+      )}
+
+      <aside
+        className={`sidebar fixed left-0 top-0 z-30 flex h-screen w-64 flex-col overflow-y-auto border-r border-white/10 bg-[#1B4332] text-white transition-transform duration-300 dark:bg-[#0D2B1F] ${
+          sidebarOpen ? "translate-x-0" : "-translate-x-full md:translate-x-0"
+        }`}
+      >
+        <div className="flex-1 p-4">
         <div className="mb-6 rounded-xl border border-white/20 bg-white/5 p-3">
           <div className="mb-2 flex items-center gap-3">
             <div className="flex h-10 w-10 items-center justify-center rounded-full bg-[#D4AF37] font-bold text-white">
@@ -98,6 +109,7 @@ const Sidebar = () => {
               <Link
                 key={`${item.to}-${item.label}`}
                 to={item.to}
+                onClick={() => setSidebarOpen(false)}
                 className={`flex items-center gap-2 rounded-lg border px-3 py-2 text-sm transition ${
                   active
                     ? "border-[#D4AF37] bg-white text-[#1B4332]"
@@ -126,7 +138,8 @@ const Sidebar = () => {
           {t("nav.logout")}
         </button>
       </div>
-    </aside>
+      </aside>
+    </>
   );
 };
 

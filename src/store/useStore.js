@@ -102,7 +102,9 @@ export const useStore = create(
       }),
 
       toggleSidebar: () =>
-        set((state) => ({ sidebarOpen: !state.sidebarOpen }))
+        set((state) => ({ sidebarOpen: !state.sidebarOpen })),
+
+      setSidebarOpen: (isOpen) => set({ sidebarOpen: isOpen }),
     }),
     {
       name: 'blrs-store',
