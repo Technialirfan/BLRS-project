@@ -501,7 +501,7 @@ const RegisterLand = () => {
             </div>
             <div className="rounded-lg border border-amber-200 bg-amber-50 p-4 dark:border-amber-700 dark:bg-amber-900/20">
               <p className="font-medium">Blockchain Info</p>
-              <p className="text-xs">Network: Hardhat Local | Estimated Gas: 21000</p>
+              <p className="text-xs">Network: Sepolia Testnet | Estimated Gas: 21000</p>
             </div>
           </div>
         ) : null}

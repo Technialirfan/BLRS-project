@@ -112,7 +112,7 @@ const PrintLandRecord = () => {
           <h2 className="font-bold">BLOCKCHAIN VERIFICATION</h2>
           <hr className="my-1 border-slate-400" />
           <p>TX Hash: {truncateHash(land.blockchainTxHash, 12)}</p>
-          <p>Network: Hardhat Local | Block: #{Math.floor(Math.random() * 90000) + 10000}</p>
+          <p>Network: Sepolia Testnet | Block: #{land.blockNumber || "N/A"}</p>
           <p>NFT Token: #{land.nftTokenId || "N/A"}</p>
         </section>
 
