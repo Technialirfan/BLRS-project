@@ -20,10 +20,10 @@ const DisputeResolutionABI = loadABI("DisputeResolution");
 const LandTokenABI = loadABI("LandToken");
 
 const CONTRACT_ADDRESSES = {
-  roleManager: process.env.ROLE_MANAGER_ADDRESS,
-  landRegistry: process.env.LAND_REGISTRY_ADDRESS,
-  disputeResolution: process.env.DISPUTE_RESOLUTION_ADDRESS,
-  landToken: process.env.LAND_TOKEN_ADDRESS,
+  roleManager: "0xEFaF31B21211128b92Eb8ED90B569fE882632b1e",
+  landRegistry: "0xcBcb3eB0b965aa973fA916997D699db8739c67BB",
+  disputeResolution: "0x567D6eEC3458f0af993f98133Bb3a3df3449Bcdf",
+  landToken: "0x44cb9A8fAE194e3338b7b51d11A88AD2cc8909EF",
 };
 
 let provider;
@@ -42,10 +42,10 @@ const initBlockchain = async () => {
     const mkWallet = (pk) => (pk ? new ethers.Wallet(pk, provider) : null);
 
     signers = {
-      deployer: mkWallet(process.env.DEPLOYER_PRIVATE_KEY),
-      patwari: mkWallet(process.env.PATWARI_PRIVATE_KEY),
-      tehsildar: mkWallet(process.env.TEHSILDAR_PRIVATE_KEY),
-      dc: mkWallet(process.env.DC_PRIVATE_KEY),
+      deployer: mkWallet(process.env.DEPLOYER_PRIVATE_KEY || process.env.PRIVATE_KEY_DEPLOYER),
+      patwari: mkWallet(process.env.PATWARI_PRIVATE_KEY || process.env.PRIVATE_KEY_PATWARI),
+      tehsildar: mkWallet(process.env.TEHSILDAR_PRIVATE_KEY || process.env.PRIVATE_KEY_TEHSILDAR),
+      dc: mkWallet(process.env.DC_PRIVATE_KEY || process.env.PRIVATE_KEY_DC),
     };
 
     const readContracts = {
