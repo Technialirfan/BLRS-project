@@ -426,7 +426,7 @@ router.put(
         const chainRes = await blockchainService.approveLandAndMintNFT(
           parcelId,
           land,
-          req.body.ownerWallet,
+          req.body.ownerWallet || process.env.DEPLOYER_WALLET || "0x000000000000000000000000000000000000dEaD",
           true
         );
 

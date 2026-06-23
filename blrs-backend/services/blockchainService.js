@@ -62,6 +62,10 @@ class BlockchainService {
       const receipt = await tx.wait();
       return this._buildReceipt(receipt);
     } catch (error) {
+      if (error.message.includes("ParcelAlreadyExists") || error.data?.includes("0xdee24b07")) {
+        console.warn(`Land ${landData.parcelId} is already registered on the blockchain. Skipping registerLand.`);
+        return { status: 1, transactionHash: "already-registered" };
+      }
       throw new Error(`Blockchain registerLand failed: ${error.message}`);
     }
   }
