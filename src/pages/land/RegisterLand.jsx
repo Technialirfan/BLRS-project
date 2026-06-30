@@ -48,7 +48,6 @@ const RegisterLand = () => {
   const [location, setLocation] = useState({ parcelId: "", district: "", tehsil: "", mouza: "" });
   const [details, setDetails] = useState({ propertyType: "Private", landType: "agricultural" });
   const [documents, setDocuments] = useState([]);
-  const [documents, setDocuments] = useState([]);
 
   const selectedDistrict = DISTRICTS.find((d) => d.name === location.district);
   const parcelExists = lands.some((l) => l.parcelId === location.parcelId.toUpperCase());
@@ -111,7 +110,7 @@ const RegisterLand = () => {
   const submit = async () => {
     if (!user && !useStore.getState().officer) return;
     setSubmitting(true);
-    
+
     try {
       // 1. Upload all documents to IPFS
       toast.loading("Uploading documents to IPFS...", { id: "upload-toast" });
@@ -150,17 +149,17 @@ const RegisterLand = () => {
       // 3. Send to backend
       toast.loading("Registering land on blockchain...", { id: "register-toast" });
       const response = await landAPI.register(landData);
-      
+
       if (!response.ok) {
         throw new Error(response.data?.message || "Failed to register land");
       }
-      
+
       toast.success("Land registered successfully", { id: "register-toast" });
 
-      setSuccess({ 
-        parcelId: response.data?.data?.land?.parcelId || location.parcelId.toUpperCase(), 
-        txHash: response.data?.data?.txHash || "Pending...", 
-        blockNumber: response.data?.data?.blockNumber || "Pending..." 
+      setSuccess({
+        parcelId: response.data?.data?.land?.parcelId || location.parcelId.toUpperCase(),
+        txHash: response.data?.data?.txHash || "Pending...",
+        blockNumber: response.data?.data?.blockNumber || "Pending..."
       });
     } catch (error) {
       toast.dismiss("upload-toast");
@@ -326,9 +325,8 @@ const RegisterLand = () => {
                     key={type.value}
                     type="button"
                     onClick={() => setDetails({ ...details, landType: type.value })}
-                    className={`rounded-xl border p-3 text-left ${
-                      details.landType === type.value ? "border-[#1B4332] bg-green-50 dark:bg-green-900/20" : "border-slate-200 dark:border-slate-700"
-                    }`}
+                    className={`rounded-xl border p-3 text-left ${details.landType === type.value ? "border-[#1B4332] bg-green-50 dark:bg-green-900/20" : "border-slate-200 dark:border-slate-700"
+                      }`}
                   >
                     <p>{type.icon}</p>
                     <p className="font-medium">{type.label}</p>
@@ -350,7 +348,7 @@ const RegisterLand = () => {
                 addFiles(e.dataTransfer.files);
               }}
             >
-              Drag and drop files here or click to browse<br/>
+              Drag and drop files here or click to browse<br />
               (Max 5 files, up to 5MB each)
             </label>
             <input id="docs" type="file" multiple className="hidden" onChange={(e) => addFiles(e.target.files || [])} />
