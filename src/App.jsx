@@ -18,6 +18,7 @@ const TehsildarDashboard = lazy(() => import("./pages/dashboards/TehsildarDashbo
 const DCDashboard = lazy(() => import("./pages/dashboards/DCDashboard"));
 
 const RegisterLand = lazy(() => import("./pages/land/RegisterLand"));
+const FieldSurvey = lazy(() => import("./pages/land/FieldSurvey"));
 const ManageLands = lazy(() => import("./pages/land/ManageLands"));
 const LandDetails = lazy(() => import("./pages/land/LandDetails"));
 const TransferLand = lazy(() => import("./pages/land/TransferLand"));
@@ -75,6 +76,7 @@ const App = () => {
           <Route path="/dashboard/dc" element={<ProtectedRoute allowedRoles={["dc"]}><DCDashboard /></ProtectedRoute>} />
 
           <Route path="/land/register" element={<ProtectedRoute allowedRoles={["patwari"]}><RegisterLand /></ProtectedRoute>} />
+          <Route path="/land/survey" element={<ProtectedRoute allowedRoles={["patwari"]}><FieldSurvey /></ProtectedRoute>} />
           <Route path="/land/all" element={<ManageLands />} />
           <Route path="/land/transfer" element={<ProtectedRoute allowedRoles={["patwari"]}><TransferLand /></ProtectedRoute>} />
           <Route path="/land/:parcelId" element={<LandDetails />} />

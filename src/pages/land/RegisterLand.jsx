@@ -12,10 +12,9 @@ import {
 import { landAPI, documentAPI } from "../../services/api";
 import { useStore } from "../../store/useStore";
 import { Progress } from "../../components/ui/progress";
-import PolygonDrawer from "../../components/map/PolygonDrawer";
 import "leaflet/dist/leaflet.css";
 
-const steps = ["Owner Info", "Location", "Land Details", "GPS Map", "Documents", "Review & Submit"];
+const steps = ["Owner Info", "Location", "Land Details", "Documents", "Review & Submit"];
 
 
 
@@ -47,47 +46,14 @@ const RegisterLand = () => {
 
   const [owner, setOwner] = useState({ fullName: "", cnic: "" });
   const [location, setLocation] = useState({ parcelId: "", district: "", tehsil: "", mouza: "" });
-  const [details, setDetails] = useState({ propertyType: "Private", landType: "agricultural", areaValue: "", areaUnit: "marla" });
-  const [latLng, setLatLng] = useState({ lat: BALOCHISTAN_CENTER[0], lng: BALOCHISTAN_CENTER[1] });
-  const [gisState, setGisState] = useState(null);
+  const [details, setDetails] = useState({ propertyType: "Private", landType: "agricultural" });
+  const [documents, setDocuments] = useState([]);
   const [documents, setDocuments] = useState([]);
 
   const selectedDistrict = DISTRICTS.find((d) => d.name === location.district);
   const parcelExists = lands.some((l) => l.parcelId === location.parcelId.toUpperCase());
 
-  const converted = useMemo(() => convertArea(Number(details.areaValue || 0), details.areaUnit), [details]);
-
-  const fetchCoordinates = async () => {
-    try {
-      toast.loading("Fetching GPS for location...", { id: "geo-fetch" });
-      const query = `${location.mouza}, ${location.tehsil}, ${location.district}, Balochistan, Pakistan`;
-      const res = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}`);
-      const data = await res.json();
-      if (data && data.length > 0) {
-        setLatLng({ lat: Number(data[0].lat), lng: Number(data[0].lon) });
-        toast.success("Map centered to Mouza!", { id: "geo-fetch" });
-      } else {
-        const districtQuery = `${location.district}, Balochistan, Pakistan`;
-        const resDist = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(districtQuery)}`);
-        const dataDist = await resDist.json();
-        if (dataDist && dataDist.length > 0) {
-          setLatLng({ lat: Number(dataDist[0].lat), lng: Number(dataDist[0].lon) });
-          toast.success("Map centered to District (Mouza not found)", { id: "geo-fetch" });
-        } else {
-          toast.dismiss("geo-fetch");
-        }
-      }
-    } catch (err) {
-      toast.dismiss("geo-fetch");
-    }
-  };
-
-  const next = () => {
-    if (step === 2) {
-      fetchCoordinates();
-    }
-    setStep((s) => Math.min(6, s + 1));
-  };
+  const next = () => setStep((s) => Math.min(5, s + 1));
   const prev = () => setStep((s) => Math.max(1, s - 1));
 
   const addFiles = (files) => {
@@ -124,9 +90,6 @@ const RegisterLand = () => {
       if (!details.landType) return false;
     }
     if (step === 4) {
-      if (!gisState || !gisState.gisData) return false; // Require Polygon
-    }
-    if (step === 5) {
       if (documents.length === 0) return false;
     }
     return true;
@@ -174,36 +137,15 @@ const RegisterLand = () => {
         district: location.district,
         tehsil: location.tehsil,
         mouza: location.mouza,
-        areaSqFt: converted.sqft,
-        areaMarla: converted.marla,
-        areaKanal: converted.kanal,
-        areaAcre: converted.acre,
+        areaSqFt: null,
         propertyType: details.propertyType,
         landType: details.landType,
-        gpsLat: gisState?.centerPoint?.lat || Number(latLng.lat),
-        gpsLng: gisState?.centerPoint?.lng || Number(latLng.lng),
-        gisData: gisState?.gisData,
-        centerPoint: gisState?.centerPoint,
-        calculatedArea: gisState?.calculatedArea,
         primaryDocHash: uploadedDocs[0].hash,
         allDocHashes: uploadedDocs.map(d => d.hash),
         docTypes: uploadedDocs.map(d => d.type),
       };
 
-      // Also create a GIS JSON to store on IPFS
-      const gisMetadataJSON = {
-         landId: landData.parcelId,
-         district: landData.district,
-         tehsil: landData.tehsil,
-         mouza: landData.mouza,
-         areaSqFt: landData.areaSqFt,
-         calculatedArea: landData.calculatedArea,
-         registrationDate: new Date().toISOString()
-      };
-      const gisBlob = new Blob([JSON.stringify(gisMetadataJSON)], { type: 'application/json' });
-      const gisHash = await handleDocumentUpload(new File([gisBlob], `gis-${landData.parcelId}.json`, { type: 'application/json' }));
-      
-      landData.gisMetadataCID = gisHash;
+
 
       // 3. Send to backend
       toast.loading("Registering land on blockchain...", { id: "register-toast" });
@@ -247,7 +189,7 @@ const RegisterLand = () => {
               setStep(1);
               setOwner({ fullName: "", cnic: "" });
               setLocation({ parcelId: "", district: "", tehsil: "", mouza: "" });
-              setDetails({ propertyType: "Private", landType: "agricultural", areaValue: "", areaUnit: "marla" });
+              setDetails({ propertyType: "Private", landType: "agricultural" });
               setDocuments([]);
             }}
             className="rounded-lg border border-slate-300 px-4 py-2 dark:border-slate-600"
@@ -265,10 +207,10 @@ const RegisterLand = () => {
         <div className="mb-2 flex items-center justify-between">
           <h1 className="text-xl font-bold">Register New Land</h1>
           <span className="text-sm text-slate-500">
-            Step {step} / 6
+            Step {step} / 5
           </span>
         </div>
-        <Progress value={(step / 6) * 100} />
+        <Progress value={(step / 5) * 100} />
         <div className="mt-3 grid gap-2 text-xs md:grid-cols-6">
           {steps.map((s, i) => (
             <div key={s} className={`rounded px-2 py-1 text-center ${step === i + 1 ? "bg-[#1B4332] text-white" : "bg-slate-100 dark:bg-slate-700"}`}>
@@ -399,28 +341,6 @@ const RegisterLand = () => {
 
         {step === 4 ? (
           <div className="space-y-3">
-            <div className="h-[500px]">
-              <PolygonDrawer 
-                initialCenter={{ lat: latLng.lat, lng: latLng.lng }} 
-                existingLands={lands.filter(l => l.gisData && l.status !== "Rejected")}
-                onPolygonComplete={(data) => {
-                  setGisState(data);
-                  if (data?.calculatedArea) {
-                    setDetails(prev => ({
-                      ...prev,
-                      areaValue: data.calculatedArea.marla,
-                      areaUnit: "marla"
-                    }));
-                  }
-                }}
-              />
-            </div>
-            {!gisState?.gisData && <p className="text-sm text-red-500">Please draw a closed polygon to represent the land boundary.</p>}
-          </div>
-        ) : null}
-
-        {step === 5 ? (
-          <div className="space-y-3">
             <label
               htmlFor="docs"
               className="flex min-h-28 cursor-pointer items-center justify-center rounded-xl border-2 border-dashed border-[#1B4332]/50 bg-green-50 text-sm dark:bg-green-900/10"
@@ -430,7 +350,8 @@ const RegisterLand = () => {
                 addFiles(e.dataTransfer.files);
               }}
             >
-              Drag and drop files here or click to browse
+              Drag and drop files here or click to browse<br/>
+              (Max 5 files, up to 5MB each)
             </label>
             <input id="docs" type="file" multiple className="hidden" onChange={(e) => addFiles(e.target.files || [])} />
             <div className="space-y-2">
@@ -468,7 +389,7 @@ const RegisterLand = () => {
           </div>
         ) : null}
 
-        {step === 6 ? (
+        {step === 5 ? (
           <div className="space-y-4 text-sm">
             <div className="rounded-lg border border-slate-200 p-4 dark:border-slate-700">
               <h2 className="mb-2 font-semibold">Review Summary</h2>
@@ -484,11 +405,8 @@ const RegisterLand = () => {
               <p>
                 <span className="font-medium">Location:</span> {location.district}, {location.tehsil}, {location.mouza}
               </p>
-              <p>
-                <span className="font-medium">Area:</span> {converted.marla} Marla ({converted.sqft} sq ft)
-              </p>
-              <p>
-                <span className="font-medium">GPS:</span> {latLng.lat}, {latLng.lng}
+              <p className="mt-2 text-amber-600 dark:text-amber-400">
+                ⚠️ Field Survey Pending: Area and boundaries will be mapped physically using Mobile GPS.
               </p>
             </div>
             <div className="rounded-lg border border-slate-200 p-4 dark:border-slate-700">
@@ -511,7 +429,7 @@ const RegisterLand = () => {
         <button type="button" onClick={prev} disabled={step === 1} className="rounded-lg border border-slate-300 px-4 py-2 text-sm disabled:opacity-50 dark:border-slate-600">
           ← Previous
         </button>
-        {step < 6 ? (
+        {step < 5 ? (
           <button
             type="button"
             onClick={next}

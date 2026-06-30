@@ -74,8 +74,13 @@ export const landAPI = {
   },
   getOne: (parcelId) =>
     apiCall(`/api/land/${parcelId}`),
+  updateSurvey: (id, payload) =>
+    apiCall(`/api/land/${id}/survey`, { method: 'PUT', body: JSON.stringify(payload) }),
   update: (parcelId, data) =>
-    apiCall(`/api/land/${parcelId}`, { method: 'PUT', body: JSON.stringify(data) }),
+    apiCall(`/api/land/${parcelId}`, { 
+      method: 'PUT', 
+      body: data instanceof FormData ? data : JSON.stringify(data) 
+    }),
   delete: (parcelId) =>
     apiCall(`/api/land/${parcelId}`, { method: 'DELETE' }),
   verify: (parcelId) =>

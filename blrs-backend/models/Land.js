@@ -51,8 +51,7 @@ const LandSchema = new mongoose.Schema(
 
     areaSqFt: {
       type: Number,
-      required: true,
-      min: [1, "Area must be greater than 0"],
+      default: null,
     },
     areaMarla: { type: Number },
     areaKanal: { type: Number },
@@ -98,6 +97,7 @@ const LandSchema = new mongoose.Schema(
     status: {
       type: String,
       enum: [
+        "SurveyPending",
         "Pending",
         "Verified",
         "Registered",
@@ -106,7 +106,7 @@ const LandSchema = new mongoose.Schema(
         "Disputed",
         "Suspended",
       ],
-      default: "Pending",
+      default: "SurveyPending",
     },
     isDisputed: { type: Boolean, default: false },
     rejectionReason: { type: String, default: null },

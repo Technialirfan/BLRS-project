@@ -6,6 +6,7 @@ import {
   Gauge,
   LandPlot,
   LogOut,
+  MapPin,
   ShieldAlert,
   Users,
   Waypoints,
@@ -43,6 +44,7 @@ const Sidebar = () => {
     patwari: [
       { to: "/dashboard/patwari", label: t("nav.dashboard"), icon: Gauge },
       { to: "/land/register", label: t("nav.registerLand"), icon: LandPlot },
+      { to: "/land/survey", label: "Field Survey", icon: MapPin },
       { to: "/land/all", label: "My Lands", icon: FileSearch },
       { to: "/land/transfer", label: t("nav.transfer"), icon: Waypoints },
       { to: "/disputes", label: "File Dispute", icon: ShieldAlert },
@@ -50,14 +52,11 @@ const Sidebar = () => {
     tehsildar: [
       { to: "/dashboard/tehsildar", label: t("nav.dashboard"), icon: Gauge },
       { to: "/land/all", label: "Land Records", icon: LandPlot },
-      { to: "/dashboard/tehsildar", label: "Verification Queue", icon: FileClock },
       { to: "/disputes", label: t("nav.disputes"), icon: ShieldAlert },
     ],
     dc: [
       { to: "/dashboard/dc", label: t("nav.dashboard"), icon: Gauge },
       { to: "/land/all", label: "Land Records", icon: LandPlot },
-      { to: "/dashboard/dc", label: "Approval Queue", icon: FileClock },
-      { to: "/dashboard/dc", label: "Transfer Approvals", icon: Waypoints },
       { to: "/disputes", label: "Dispute Resolution", icon: ShieldAlert },
     ],
   };

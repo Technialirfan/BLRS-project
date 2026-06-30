@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
 import toast from "react-hot-toast";
 import { Area, AreaChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 import { Award, CheckCircle2, Clock3, ShieldAlert, Waypoints, XCircle } from "lucide-react";
@@ -174,7 +175,11 @@ export default function DCDashboard() {
                 <div key={land.parcelId} className="rounded-lg border border-slate-200 p-3 dark:border-slate-700">
                   <div className="flex items-center justify-between">
                     <div>
-                      <p className="font-medium">{land.parcelId}</p>
+                      <p className="font-medium">
+                        <Link to={`/land/${land.parcelId}`} className="text-blue-600 hover:underline dark:text-blue-400">
+                          {land.parcelId}
+                        </Link>
+                      </p>
                       <p className="text-sm text-slate-600 dark:text-slate-300">{land.ownerName}</p>
                     </div>
                     <StatusBadge status={land.status} size="sm" />
@@ -202,7 +207,11 @@ export default function DCDashboard() {
             <div className="space-y-2">
               {transferQueue.map((land) => (
                 <div key={land.parcelId} className="rounded-lg border border-slate-200 p-3 dark:border-slate-700">
-                  <p className="font-medium">{land.parcelId}</p>
+                  <p className="font-medium">
+                    <Link to={`/land/${land.parcelId}`} className="text-blue-600 hover:underline dark:text-blue-400">
+                      {land.parcelId}
+                    </Link>
+                  </p>
                   <p className="text-sm text-slate-600 dark:text-slate-300">
                     {land.ownerName} → {land.pendingTransferName}
                   </p>
@@ -236,7 +245,10 @@ export default function DCDashboard() {
               <div key={d._id} className="flex items-center justify-between rounded-lg border border-slate-200 p-3 dark:border-slate-700">
                 <div>
                   <p className="font-medium">
-                    #{d.disputeId} - {d.parcelId}
+                    #{d.disputeId} - 
+                    <Link to={`/land/${d.parcelId}`} className="ml-1 text-blue-600 hover:underline dark:text-blue-400">
+                      {d.parcelId}
+                    </Link>
                   </p>
                   <p className="text-sm text-slate-600 dark:text-slate-300">{d.claimantName}</p>
                 </div>

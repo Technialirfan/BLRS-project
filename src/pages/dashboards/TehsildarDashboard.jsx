@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
 import toast from "react-hot-toast";
 import { CheckCircle2, Clock3, ShieldAlert, XCircle } from "lucide-react";
 import { useStore } from "../../store/useStore";
@@ -172,7 +173,11 @@ export default function TehsildarDashboard() {
               <tbody>
                 {verificationQueue.map((land) => (
                   <tr key={land.parcelId} className="border-b border-slate-100 dark:border-slate-700/60">
-                    <td className="px-3 py-2 font-medium">{land.parcelId}</td>
+                    <td className="px-3 py-2 font-medium">
+                      <Link to={`/land/${land.parcelId}`} className="text-blue-600 hover:underline dark:text-blue-400">
+                        {land.parcelId}
+                      </Link>
+                    </td>
                     <td className="px-3 py-2">{land.ownerName}</td>
                     <td className="px-3 py-2">{land.mouza}</td>
                     <td className="px-3 py-2">{land.areaMarla} Marla</td>
@@ -236,7 +241,11 @@ export default function TehsildarDashboard() {
               <tbody>
                 {transferQueue.map((land) => (
                   <tr key={land.parcelId} className="border-b border-slate-100 dark:border-slate-700/60">
-                    <td className="px-3 py-2 font-medium">{land.parcelId}</td>
+                    <td className="px-3 py-2 font-medium">
+                      <Link to={`/land/${land.parcelId}`} className="text-blue-600 hover:underline dark:text-blue-400">
+                        {land.parcelId}
+                      </Link>
+                    </td>
                     <td className="px-3 py-2">{land.ownerName}</td>
                     <td className="px-3 py-2">{land.pendingTransferName}</td>
                     <td className="px-3 py-2">{land.areaMarla} Marla</td>

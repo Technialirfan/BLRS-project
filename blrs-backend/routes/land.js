@@ -88,7 +88,7 @@ router.post(
         tehsil: req.body.tehsil,
         mouza: req.body.mouza,
         propertyType: req.body.propertyType || "Private",
-        areaSqFt: Number(req.body.areaSqFt),
+        areaSqFt: req.body.areaSqFt ? Number(req.body.areaSqFt) : null,
         landType: req.body.landType,
         primaryDocHash,
         allDocHashes,
@@ -143,6 +143,60 @@ router.post(
           blockNumber: 0,
         })
       );
+    } catch (error) {
+      return next(error);
+    }
+  }
+);
+
+// NEW: Route for mobile GPS live survey
+router.put(
+  "/:id/survey",
+  protect,
+  authorize(ROLES.PATWARI),
+  async (req, res, next) => {
+    try {
+      const land = await Land.findById(req.params.id);
+      if (!land) {
+        return res.status(404).json(createErrorResponse("Land record not found"));
+      }
+
+      if (land.status !== "SurveyPending") {
+        return res.status(400).json(createErrorResponse("Land is not in SurveyPending status"));
+      }
+
+      if (!checkDistrictAccess(req.officer, land)) {
+        return res.status(403).json(createErrorResponse("Unauthorized to survey this district"));
+      }
+
+      const { gisData, areaSqFt, centerPoint } = req.body;
+
+      if (!gisData || !areaSqFt) {
+        return res.status(400).json(createErrorResponse("gisData and areaSqFt are required to complete survey"));
+      }
+
+      // Update the land record
+      land.gisData = gisData;
+      land.areaSqFt = Number(areaSqFt);
+      if (centerPoint) land.centerPoint = centerPoint;
+      
+      // Calculate the hash of the new geometry for security
+      const geoJsonString = JSON.stringify(gisData);
+      land.geoJsonHash = crypto.createHash("sha256").update(geoJsonString).digest("hex");
+      
+      // Move status forward to Pending (ready for Tehsildar)
+      land.status = "Pending";
+      
+      await land.save();
+
+      await auditService.log(
+        "LAND_SURVEY_COMPLETED",
+        req.officer,
+        { parcelId: land.parcelId },
+        { areaSqFt, ipAddress: req.ip }
+      );
+
+      return res.json(createSuccessResponse("Field survey completed successfully", { land }));
     } catch (error) {
       return next(error);
     }
@@ -326,6 +380,7 @@ router.put(
   "/:parcelId",
   protect,
   authorize(ROLES.PATWARI, ROLES.ADMIN),
+  upload.array("newDocs"),
   async (req, res, next) => {
     try {
       const parcelId = normalizeParcelId(req.params.parcelId);
@@ -350,6 +405,54 @@ router.put(
       if (areaKanal) land.areaKanal = areaKanal;
       if (areaAcre) land.areaAcre = areaAcre;
       if (landType) land.landType = landType;
+
+      // Handle Document Edits
+      let retainedDocHashes = [];
+      let retainedDocTypes = [];
+      
+      if (req.body.retainedDocHashes) {
+        retainedDocHashes = Array.isArray(req.body.retainedDocHashes) ? req.body.retainedDocHashes : [req.body.retainedDocHashes];
+        retainedDocTypes = Array.isArray(req.body.retainedDocTypes) ? req.body.retainedDocTypes : [req.body.retainedDocTypes];
+      }
+
+      // Unpin removed documents
+      if (land.allDocHashes && land.allDocHashes.length > 0) {
+        for (const oldHash of land.allDocHashes) {
+          if (!retainedDocHashes.includes(oldHash)) {
+            try {
+              await ipfsService.unpinFile(oldHash);
+            } catch (err) {
+              console.error(`Failed to unpin ${oldHash}:`, err.message);
+            }
+          }
+        }
+      }
+
+      // Upload new documents
+      const newDocHashes = [];
+      const newDocTypes = [];
+      if (req.files && req.files.length > 0) {
+        let types = req.body.newDocTypes || [];
+        if (!Array.isArray(types)) types = [types];
+
+        for (let i = 0; i < req.files.length; i++) {
+          const file = req.files[i];
+          const uploadRes = await ipfsService.uploadFile(file.path, file.originalname);
+          newDocHashes.push(uploadRes.ipfsHash);
+          newDocTypes.push(types[i] || "Supporting Document");
+        }
+      }
+
+      const finalDocHashes = [...retainedDocHashes, ...newDocHashes];
+      const finalDocTypes = [...retainedDocTypes, ...newDocTypes];
+
+      if (finalDocHashes.length > 0) {
+        land.allDocHashes = finalDocHashes;
+        land.docTypes = finalDocTypes;
+        land.primaryDocHash = finalDocHashes[0]; // Set the first one as primary
+      } else {
+        return res.status(400).json(createErrorResponse("At least one document is required."));
+      }
 
       await land.save();
       return res.json(createSuccessResponse("Land updated successfully", { land }));
