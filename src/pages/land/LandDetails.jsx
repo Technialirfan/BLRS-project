@@ -247,7 +247,7 @@ const LandDetails = () => {
                 <span className="font-medium">Mouza:</span> {land.mouza}
               </p>
               <p>
-                <span className="font-medium">Area:</span> {land.areaMarla} Marla ({land.areaSqFt} sq ft)
+                <span className="font-medium">Area:</span> {land.areaSqFt ? `${land.areaMarla} Marla (${land.areaSqFt} sq ft)` : "Pending Field Survey"}
               </p>
             </div>
           </div>
@@ -265,13 +265,18 @@ const LandDetails = () => {
                 </div>
               )}
             </div>
-          ) : (
+          ) : land.gpsLat && land.gpsLng ? (
             <LandMap
               singleMarker={{ lat: land.gpsLat, lng: land.gpsLng, label: land.parcelId }}
               center={[land.gpsLat, land.gpsLng]}
               zoom={13}
               readOnly
             />
+          ) : (
+            <div className="rounded-xl border border-slate-200 bg-slate-50 p-6 text-center text-slate-500 dark:border-slate-700 dark:bg-slate-800/50">
+              <p className="font-medium">GIS Map & Boundaries Pending</p>
+              <p className="text-sm">Coordinates will be mapped during the Field Survey.</p>
+            </div>
           )}
 
           <div className="rounded-xl border border-slate-200 bg-white p-4 dark:border-slate-700 dark:bg-slate-800">
