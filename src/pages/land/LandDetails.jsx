@@ -265,17 +265,22 @@ const LandDetails = () => {
                 </div>
               )}
             </div>
-          ) : land.gpsLat && land.gpsLng ? (
-            <LandMap
-              singleMarker={{ lat: land.gpsLat, lng: land.gpsLng, label: land.parcelId }}
-              center={[land.gpsLat, land.gpsLng]}
-              zoom={13}
-              readOnly
-            />
           ) : (
-            <div className="rounded-xl border border-slate-200 bg-slate-50 p-6 text-center text-slate-500 dark:border-slate-700 dark:bg-slate-800/50">
-              <p className="font-medium">GIS Map & Boundaries Pending</p>
-              <p className="text-sm">Coordinates will be mapped during the Field Survey.</p>
+            <div className="rounded-xl border border-slate-200 bg-white p-4 dark:border-slate-700 dark:bg-slate-800 relative">
+              <h2 className="mb-2 text-lg font-semibold">GIS Map & Boundaries Pending</h2>
+              <p className="mb-4 text-sm text-slate-500">Coordinates will be mapped during the Field Survey.</p>
+              <div className="opacity-50 pointer-events-none">
+                <LandMap
+                  parcels={lands}
+                  center={land.gpsLat ? [land.gpsLat, land.gpsLng] : undefined}
+                  zoom={land.gpsLat ? 13 : 6}
+                  singleMarker={land.gpsLat ? { lat: land.gpsLat, lng: land.gpsLng, label: land.parcelId } : null}
+                  readOnly
+                />
+              </div>
+              <div className="absolute inset-0 z-10 flex flex-col items-center justify-center bg-white/40 dark:bg-slate-900/40 backdrop-blur-[2px] mt-16 rounded-xl">
+                 <p className="text-lg font-bold text-slate-700 dark:text-slate-300">Pending Field Survey</p>
+              </div>
             </div>
           )}
 
@@ -380,7 +385,7 @@ const LandDetails = () => {
             </>
           ) : null}
 
-          {user?.role === "patwari" && land.status === "Pending" ? (
+          {user?.role === "patwari" && (land.status === "Pending" || land.status === "SurveyPending") ? (
             <>
               <button type="button" className="rounded bg-blue-600 px-3 py-2 text-sm text-white" onClick={() => setEditOpen(true)}>
                 ✎ Edit Details
