@@ -28,6 +28,7 @@ const registerLandValidator = [
     ])
     .withMessage("Invalid land type"),
   body("areaSqFt")
+    .optional({ nullable: true })
     .isFloat({ gt: 0 })
     .withMessage("Area must be greater than 0"),
   body("gpsLat").optional().isFloat({ min: -90, max: 90 }),
