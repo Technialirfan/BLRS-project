@@ -44,6 +44,10 @@
   animation: pulse-red 1.5s ease-in-out infinite;
 }
 
+.tx-hash {
+  word-break: break-all;
+}
+
 @keyframes glow {
   0%,
   100% {
