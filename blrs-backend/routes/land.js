@@ -643,45 +643,57 @@ router.put(
           .json(createErrorResponse("Private lands do not require DC approval"));
       }
 
-      // Synchronously execute the full blockchain workflow (Patwari -> Tehsildar -> DC)
-      await blockchainService.registerLand(land);
-      await blockchainService.verifyLand(parcelId);
-      const chainRes = await blockchainService.approveLandAndMintNFT(
-        parcelId,
-        land,
-        req.body.ownerWallet
-      );
-
+      // Optimistically update the database to provide instant feedback to the frontend
       land.status = "Registered";
       land.approvedByDC = req.officer._id;
       land.approvedByDCName = req.officer.fullName;
       land.approvedAt = new Date();
-      land.nftTokenId = chainRes.nftTokenId;
-      land.blockchainTxHash = chainRes.txHash;
-      land.blockNumber = chainRes.blockNumber;
+      land.blockchainTxHash = "Processing in background...";
       await land.save();
 
-      await auditService.log(
-        AUDIT_ACTIONS.LAND_APPROVED,
-        req.officer,
-        { parcelId, nftTokenId: chainRes.nftTokenId },
-        {
-          parcelId,
-          txHash: chainRes.txHash,
-          blockNumber: chainRes.blockNumber,
-          ipAddress: req.ip,
-          userAgent: req.get("user-agent"),
+      const officer = req.officer;
+      const ownerWallet = req.body.ownerWallet;
+      const ip = req.ip;
+      const userAgent = req.get("user-agent");
+
+      // Run full blockchain workflow asynchronously to prevent frontend from hanging
+      (async () => {
+        try {
+          // Blockchain interaction (Patwari -> Tehsildar -> DC)
+          await blockchainService.registerLand(land);
+          await blockchainService.verifyLand(parcelId);
+          const chainRes = await blockchainService.approveLandAndMintNFT(
+            parcelId,
+            land,
+            ownerWallet || process.env.DEPLOYER_WALLET || "0x000000000000000000000000000000000000dEaD",
+            true
+          );
+
+          // Update database with final blockchain data once mining completes
+          land.nftTokenId = chainRes.nftTokenId;
+          land.blockchainTxHash = chainRes.txHash;
+          land.blockNumber = chainRes.blockNumber;
+          await land.save();
+
+          await auditService.log(
+            AUDIT_ACTIONS.LAND_APPROVED,
+            officer,
+            { parcelId, nftTokenId: chainRes.nftTokenId },
+            {
+              parcelId,
+              txHash: chainRes.txHash,
+              blockNumber: chainRes.blockNumber,
+              ipAddress: ip,
+              userAgent: userAgent,
+            }
+          );
+        } catch (err) {
+          console.error("Background Blockchain Processing Error (DC Approval):", err);
         }
-      );
+      })();
 
       return res.json(
-        createSuccessResponse("Land approved successfully", {
-          land,
-          txHash: chainRes.txHash,
-          blockNumber: chainRes.blockNumber,
-          nftTokenId: chainRes.nftTokenId,
-          mintTxHash: chainRes.mintTxHash,
-        })
+        createSuccessResponse("Government Land verified successfully. Blockchain minting is processing in the background.")
       );
     } catch (error) {
       return next(error);

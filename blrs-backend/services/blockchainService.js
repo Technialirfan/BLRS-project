@@ -50,7 +50,7 @@ class BlockchainService {
         landData.district,
         landData.tehsil,
         landData.mouza,
-        Number(landData.areaSqFt),
+        Math.round(Number(landData.areaSqFt)),
         landTypeMap[landData.landType] ?? 0,
         landData.primaryDocHash,
         gpsLat,
