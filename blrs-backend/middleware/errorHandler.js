@@ -25,6 +25,22 @@ const errorHandler = (err, req, res, next) => {
     statusCode = 401;
   }
 
+  // Parse ugly Blockchain revert errors into beautiful frontend messages
+  if (message.includes("execution reverted:")) {
+    const revertMatch = message.match(/reverted: "([^"]+)"/);
+    if (revertMatch && revertMatch[1]) {
+      // Extract just the clean reason, e.g. "Only DC can resolve Govt land"
+      let cleanMsg = revertMatch[1];
+      if (cleanMsg.includes(": ")) {
+        cleanMsg = cleanMsg.split(": ")[1]; // Remove contract name prefix like "DisputeResolution: "
+      }
+      message = cleanMsg;
+    } else {
+      message = "Blockchain transaction rejected by smart contract logic.";
+    }
+    statusCode = 400;
+  }
+
   if (process.env.NODE_ENV === "development") {
     console.error("ERROR:", err);
   }
