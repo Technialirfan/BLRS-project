@@ -666,7 +666,7 @@ router.put(
             parcelId,
             land,
             ownerWallet || process.env.DEPLOYER_WALLET || "0x000000000000000000000000000000000000dEaD",
-            true
+            false
           );
 
           // Update database with final blockchain data once mining completes
