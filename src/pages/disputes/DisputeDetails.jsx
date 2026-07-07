@@ -111,8 +111,8 @@ const DisputeDetails = () => {
     );
   }
 
-  // Workflow logic based on Land Type
-  const isGovtLand = land?.landType === "Government";
+  // Workflow logic based on Property Type
+  const isGovtLand = land?.propertyType === "Government" || land?.landType === "government" || land?.landType === "Government";
   const isPrivateLand = !isGovtLand;
   
   const canTehsildarReview = user?.role === "tehsildar" && isGovtLand && dispute.status === "Filed";

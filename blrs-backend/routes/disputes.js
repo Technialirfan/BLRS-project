@@ -298,7 +298,7 @@ router.put(
         return res.status(403).json(createErrorResponse("You are not authorized for this dispute"));
       }
 
-      if (land.landType === "Government") {
+      if (land.propertyType === "Government" || land.landType === "government" || land.landType === "Government") {
         if (req.officer.role !== ROLES.DC) {
           return res.status(403).json(createErrorResponse("Only DC can resolve disputes on Government land"));
         }
