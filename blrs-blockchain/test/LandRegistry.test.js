@@ -60,8 +60,7 @@ describe("LandRegistry", function () {
       1,
       "QmXyz123abcdef",
       30179800,
-      67008900
-    );
+      67008900, 'mockGeoJson', 'mockGis');
   }
 
   it("Should deploy with correct RoleManager address", async function () {
@@ -165,8 +164,7 @@ describe("LandRegistry", function () {
         1,
         "QmXyz123abcdef",
         30179800,
-        67008900
-      )
+        67008900, 'mockGeoJson', 'mockGis')
     ).to.be.revertedWithCustomError(landRegistry, "InvalidArea");
   });
 
@@ -185,8 +183,7 @@ describe("LandRegistry", function () {
         1,
         "QmXyz123abcdef",
         30179800,
-        67008900
-      )
+        67008900, 'mockGeoJson', 'mockGis')
     ).to.be.revertedWith("LandRegistry: CNIC must be 13 digits");
   });
 
@@ -205,8 +202,7 @@ describe("LandRegistry", function () {
         1,
         "QmXyz123abcdef",
         30179800,
-        67008900
-      )
+        67008900, 'mockGeoJson', 'mockGis')
     ).to.be.revertedWithCustomError(landRegistry, "EmptyString");
   });
 
@@ -225,8 +221,7 @@ describe("LandRegistry", function () {
         1,
         "",
         30179800,
-        67008900
-      )
+        67008900, 'mockGeoJson', 'mockGis')
     ).to.be.revertedWithCustomError(landRegistry, "EmptyString");
   });
 

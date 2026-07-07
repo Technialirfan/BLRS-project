@@ -81,8 +81,7 @@ describe("Integration: Full Land Registration Workflow", function () {
       1,
       "QmPrimaryDocHash",
       30179800,
-      67008900
-    );
+      67008900, 'mockGeoJson', 'mockGis');
   }
 
   it("WORKFLOW 1: Complete Registration (Patwari->Tehsildar->DC->NFT)", async function () {

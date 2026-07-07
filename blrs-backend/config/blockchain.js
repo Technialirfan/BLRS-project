@@ -32,9 +32,13 @@ let contracts = {};
 
 const initBlockchain = async () => {
   try {
-    provider = new ethers.JsonRpcProvider(
-      process.env.BLOCKCHAIN_RPC_URL || "http://127.0.0.1:8545"
-    );
+    const rpcUrl = process.env.BLOCKCHAIN_RPC_URL || "http://127.0.0.1:8545";
+    if (rpcUrl.startsWith("wss://")) {
+      provider = new ethers.WebSocketProvider(rpcUrl);
+      console.log("WebSocket Provider enabled for real-time mining detection.");
+    } else {
+      provider = new ethers.JsonRpcProvider(rpcUrl);
+    }
 
     const network = await provider.getNetwork();
     console.log(`Blockchain Connected: ${network.name} (${network.chainId})`);
