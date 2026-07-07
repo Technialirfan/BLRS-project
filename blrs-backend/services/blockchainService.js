@@ -107,7 +107,7 @@ class BlockchainService {
         landData.ownerCNIC,
         landData.ownerName,
         landData.district,
-        Number(landData.areaSqFt),
+        Math.round(Number(landData.areaSqFt)),
         landData.landType,
         tokenURI,
         { nonce }
