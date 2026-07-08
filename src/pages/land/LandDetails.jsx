@@ -342,7 +342,9 @@ const LandDetails = () => {
           <div className="rounded-xl border border-slate-200 bg-white p-4 dark:border-slate-700 dark:bg-slate-800">
             <h2 className="mb-2 text-lg font-semibold">Blockchain Record</h2>
             <p className="tx-hash text-sm">{land.blockchainTxHash}</p>
-            <p className="mt-1 text-xs text-slate-500">Block: #{Math.floor(Math.random() * 90000) + 10000}</p>
+            <p className="mt-1 text-xs text-slate-500">
+              Block: {land.blockNumber ? `#${land.blockNumber}` : "Pending..."}
+            </p>
             <button type="button" className="mt-2 text-sm text-[#1B4332] hover:underline dark:text-[#D4AF37]" onClick={() => setRawOpen(true)}>
               View Raw Transaction
             </button>
