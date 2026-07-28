@@ -553,7 +553,7 @@ router.put(
 
             // Update database with final blockchain data once mining completes
             land.nftTokenId = chainRes.nftTokenId;
-            land.blockchainTxHash = chainRes.txHash;
+            land.blockchainTxHash = chainRes.transactionHash || chainRes.txHash;
             land.blockNumber = chainRes.blockNumber;
             await land.save();
 
@@ -671,7 +671,7 @@ router.put(
 
           // Update database with final blockchain data once mining completes
           land.nftTokenId = chainRes.nftTokenId;
-          land.blockchainTxHash = chainRes.txHash;
+          land.blockchainTxHash = chainRes.transactionHash || chainRes.txHash;
           land.blockNumber = chainRes.blockNumber;
           await land.save();
 
